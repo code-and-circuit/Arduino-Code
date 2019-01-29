@@ -22,7 +22,7 @@ int speed = 0x0c;
 
 void setup()  
 {
-  Wire.begin(); 
+  Wire.begin(10); 
 
 	pinMode(13, OUTPUT);
 
