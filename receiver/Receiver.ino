@@ -14,7 +14,6 @@ void setup()
   Serial.begin(9600);
   Serial.println("Listening..."); 
   Wire.begin(5); // join i2c bus
-  Wire.onRequest(requestEvent); // register event
   pinMode(13, OUTPUT);
 
   radio.begin();
@@ -48,6 +47,9 @@ void loop()
 			digitalWrite(13, LOW);
 
 		timeoutTimer = millis();
+		  
+		 Wire.write(data, 4);
+		 Wire.requestFrom(10, 4);
 	  }
   }
 
@@ -61,9 +63,3 @@ void loop()
 	data[3] = 0;
   }
 }
-
-void requestEvent() {
-
-	Wire.write((byte*)data, 4);
-}
-
