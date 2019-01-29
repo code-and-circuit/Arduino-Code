@@ -4,6 +4,8 @@
 #include <SoftwareSerialParityHalfDuplex.h>
 #include <Wire.h>
 
+Wire.onRequest(requestEvent);
+
 SoftwareSerialParityHalfDuplex mySerial(10, 10); 
 
 unsigned long tenMilliTimer = 0;
@@ -43,7 +45,9 @@ union foo
   byte a;
   char b;
 };
-void receiveData(void)
+
+
+void requestEvent()
 {
   Serial.print(millis());
   Serial.println(" receiveData");
@@ -168,27 +172,6 @@ void loop()
      oneSecondTimer += 1000;		    	
 
   }
-  
-  	// every 100 ms
-  if (milli >= hundredMilliTimer)
-  {
-  	  	digitalWrite(13, HIGH);
-
-    Wire.requestFrom(5, 4);
-    curFor = 0; // reset in case lost connection
- 	curTurn = 0;
-	receiveData();
-	  	digitalWrite(13, LOW);
-
-    hundredMilliTimer = millis() + 100;
-
-  }
-
-	// every 10 ms
-  if (milli >= tenMilliTimer)
-  {
-    tenMilliTimer += 10;
-
   
 	
     if (cycleCount <= 1)
