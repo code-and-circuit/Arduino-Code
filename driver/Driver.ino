@@ -172,7 +172,9 @@ void loop()
      oneSecondTimer += 1000;		    	
 
   }
-  
+  if (milli >= tenMilliTimer)
+  {
+    tenMilliTimer += 10;
 	
     if (cycleCount <= 1)
     {
