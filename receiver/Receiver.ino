@@ -49,7 +49,6 @@ void loop()
 		timeoutTimer = millis();
 		  
 		 Wire.write(data, 4);
-		 Wire.requestFrom(10, 4);
 	  }
   }
 
