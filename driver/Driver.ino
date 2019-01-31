@@ -4,7 +4,7 @@
 #include <SoftwareSerialParityHalfDuplex.h>
 #include <Wire.h>
 
-Wire.onRequest(requestEvent);
+Wire.onReceive(receiveEvent);
 
 SoftwareSerialParityHalfDuplex mySerial(10, 10); 
 
@@ -47,7 +47,7 @@ union foo
 };
 
 
-void requestEvent()
+void receiveEvent()
 {
   Serial.print(millis());
   Serial.println(" receiveData");
