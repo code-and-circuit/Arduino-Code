@@ -117,6 +117,28 @@ void Drive (bool direction, int cm, int speed)
   
 }
 
+void Turn (bool direction, int degrees, int speed)
+{
+  if (direction)
+  {
+    num = 1;
+  }
+  else
+  {
+    num = -1;
+  }
+  timer++;
+  data[3] = speed;
+  data[2] = 100 * num; //Set it to right or left.
+  if (timer >= degrees)
+  {
+    data[2] = 0;
+    timer = 0;
+  }//Something to set data[2] to 0 after we have reached the 
+  //destination a.k.a time.
+  
+}
+
 void requestEvent() {
 
 	Wire.write((byte*)data, 4);
