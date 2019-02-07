@@ -6,6 +6,7 @@
 RF24 radio(7, 8); // CE, CSN
 const byte addresses[][6] = {"00001", "00002"};
 
+unsigned long secondTimer = 0;
 unsigned long hundredMilliTimer = 0;
 unsigned long timeoutTimer = 0;
 
