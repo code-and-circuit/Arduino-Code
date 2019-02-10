@@ -1,7 +1,7 @@
 // This code runs on the arduino connected to the chair. Pin 10 is connected to the white wire.
 // SCL/SDA Connected to controller arduino.
 
-#include <SoftwareSerialParityHalfDuplex.h>
+#include "SoftwareSerialParityHalfDuplex.h"
 #include <Wire.h>
 
 SoftwareSerialParityHalfDuplex mySerial(10, 10); 
