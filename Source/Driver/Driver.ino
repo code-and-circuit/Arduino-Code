@@ -1,8 +1,10 @@
 // This code runs on the arduino connected to the chair. Pin 10 is connected to the white wire.
 // SCL/SDA Connected to controller arduino.
 
-#include "SoftwareSerialParityHalfDuplex.h"
+#include 'SoftwareSerialParityHalfDuplex.h"
 #include <Wire.h>
+
+Wire.onReceive(receiveEvent);
 
 SoftwareSerialParityHalfDuplex mySerial(10, 10);
 
@@ -24,7 +26,7 @@ void setup()
 
   pinMode(13, OUTPUT);
 
-  pinMode(10, OUTPUT);
+  pinMode(10,OUTPUT);
   digitalWrite (10, LOW);  // start serial line LOW
 
   Serial.begin(115200);
@@ -37,14 +39,15 @@ void setup()
   hundredMilliTimer = millis();
 }
 
-int coms[3] = {0, 0, 0};
+int coms[3] = {0,0,0};
 union foo
 {
   byte a;
   char b;
 };
 
-void receiveData(void)
+
+void receiveEvent()
 {
   Serial.print(millis());
   Serial.println(" receiveData");
@@ -57,7 +60,7 @@ void receiveData(void)
       union foo bar;
       bar.b = Wire.read(); // receive byte as a character
       int c = bar.b;
-      //	Serial.println(c);
+      // Serial.println(c);
       if (c == 'g')
       {
         comsN++;
@@ -67,7 +70,7 @@ void receiveData(void)
     {
       union foo bar;
       bar.a = Wire.read(); // receive byte as a character
-      //	   	Serial.println(c);
+      //      Serial.println(c);
       int c = bar.b;
       coms[comsN] = c; // receive byte
       comsN++;
@@ -79,16 +82,16 @@ void receiveData(void)
         int t = coms[1];
         int s = coms[2];
         /*
-        	    	Serial.print(a);
-        	    	Serial.print(" ");
-        	    	Serial.print(t);
-        	    	Serial.print(" ");
-        	    	Serial.println(s);
+        Serial.print(a);
+        Serial.print(" ");
+        Serial.print(t);
+        Serial.print(" ");
+        Serial.println(s);
         */
         if (a >= -100 && a <= 100 && t >= -100 && t <= 100 && s >= 0 && s <= 0xe)
         {
 
-          //	Serial.println("Received command: ");
+          //  Serial.println("Received command: ");
 
           Serial.print("Forward/Backward: ");
           Serial.print (a);
@@ -143,13 +146,13 @@ void sendJoystickPacket(int forward, int turn, int speed)
   buffer[2] = speed;
   buffer[3] = forward;
   buffer[4] = turn;
-  /*	Serial.print(millis());
-  	Serial.print(" Sending :");
-  	Serial.print(forward);
-  	Serial.print(" ");
-  	Serial.print(turn);
-  	Serial.print(" ");
-  	Serial.println(speed);
+  /*  Serial.print(millis());
+    Serial.print(" Sending :");
+    Serial.print(forward);
+    Serial.print(" ");
+    Serial.print(turn);
+    Serial.print(" ");
+    Serial.println(speed);
   */
   buffer[5] = 0xff - (buffer[0] + buffer[1] + buffer[2] + buffer[3] + buffer[4]);
 
@@ -169,28 +172,9 @@ void loop()
     oneSecondTimer += 1000;
 
   }
-
-  // every 100 ms
-  if (milli >= hundredMilliTimer)
-  {
-    digitalWrite(13, HIGH);
-
-    Wire.requestFrom(5, 4);
-    curFor = 0; // reset in case lost connection
-    curTurn = 0;
-    receiveData();
-    digitalWrite(13, LOW);
-
-    hundredMilliTimer = millis() + 100;
-
-  }
-
-  // every 10 ms
   if (milli >= tenMilliTimer)
   {
     tenMilliTimer += 10;
-
-
 
     if (cycleCount <= 1)
     {
