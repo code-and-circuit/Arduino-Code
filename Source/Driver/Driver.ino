@@ -20,7 +20,7 @@ int speed = 0x0c;
 
 void setup()
 {
-  Wire.begin(10);
+  Wire.begin(0x33);
   Wire.onReceive(receiveEvent);
 
   pinMode(13, OUTPUT);
@@ -160,6 +160,7 @@ void sendJoystickPacket(int forward, int turn, int speed)
 
 void loop()
 {
+  
   unsigned long milli = millis();
 
   // once per second
