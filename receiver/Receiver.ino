@@ -89,7 +89,18 @@ void loop()
       }
       //Something to set data[1] to 0 after we have reached the 
   //destination a.k.a time.
-      Serial.println("Forwards data: " + data[1], "Turning data: " + data[2], "Timer one: " + timer, "Timer two for turning: " + timer2, "Run time forwards: " + time, "Run time turning: " + turntime);
+     erial.println("Forwards data: ");
+     Serial.println(data[1]);
+     Serial.println("Turning data: "); 
+     Serial.println(data[2]);
+     Serial.println("Timer one: "); 
+     Serial.println(timer);
+     Serial.println("Timer two for turning: ");
+     Serial.println(timer2);
+     Serial.println("Run time forwards: ");
+     Serial.println(time);
+     Serial.println("Run time turning: ");
+     Serial.println(turntime); 
 
 		timeoutTimer = millis();
 	  }
@@ -147,7 +158,7 @@ void Turn (bool direction, int degrees)
   timer2 = 0;
   data[3] = 15;
   data[2] = 100 * num; //Set it to right or left.
-  turntime = cm * 1;//Change this to a time...
+  turntime = degrees * 1;//Change this to a time...
   
 }
 
