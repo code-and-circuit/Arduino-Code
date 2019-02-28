@@ -29,7 +29,10 @@ void setup()
   timeoutTimer = millis();
 }
 
+int timer2 = 0;
+int turntime = 0;
 int counter = 0;
+int time = 0;
 int num = 0;
 int timer = 0;
 char data[4] = {0,0,0,0};
@@ -41,22 +44,22 @@ void loop()
       counter++;
       secondTimer += 1000;
     
-   if (counter % 4 == 0)
-  {
-      Drive(true, 10, 10);
-  }
+   //if (counter % 4 == 0)
+  //{
+      Drive(true, 10);
+ /* }
   else if (counter % 4 == 1)
   {
-      Drive(true, 0, 0);
+      Drive(true, 0);
   }
   if (counter % 4 == 2)
   {
-      Drive(false, 10, 10);
+      Drive(false, 10);
   }
   else if (counter % 4 == 3)
   {
-      Drive(true, 0, 0);
-  }
+      Drive(true, 0);
+  }*/
     }
   	// every 100 ms
   if (millis() >= hundredMilliTimer)
@@ -72,6 +75,21 @@ void loop()
 	      radio.read(data, 4);
 	   
 			digitalWrite(13, LOW);
+        timer++;
+        timer2++;
+      if (timer >= time)
+      {
+      data[1] = 0;
+      //timer = 0;
+      }
+      if (timer2 >= turntime)
+      {
+      data[2] = 0;
+      //timer2 = 0;
+      }
+      //Something to set data[1] to 0 after we have reached the 
+  //destination a.k.a time.
+      Serial.println("Forwards data: " + data[1], "Turning data: " + data[2], "Timer one: " + timer, "Timer two for turning: " + timer2, "Run time forwards: " + time, "Run time turning: " + turntime);
 
 		timeoutTimer = millis();
 	  }
@@ -94,9 +112,11 @@ void EmergencyStop ()
   data[1] = 0;
   data[2] = 0;
   data[3] = 0;
+  timer = 100000;
+  timer2 = 1000000;
 }
 
-void Drive (bool direction, int cm, int speed)
+void Drive (bool direction, int cm)
 {
   if (direction)
   {
@@ -106,19 +126,15 @@ void Drive (bool direction, int cm, int speed)
   {
     num = -1;
   }
-  timer++;
-  data[3] = speed;
-  data[1] = 100 * num; //Set it to forward or backward.
-  if (timer >= cm)
-  {
-    data[1] = 0;
+  //We'll need a bool to check if we are already moving so that we don't attempt to initiate multiple
     timer = 0;
-  }//Something to set data[1] to 0 after we have reached the 
-  //destination a.k.a time.
+  data[3] = 15;
+  data[1] = 100 * num; //Set it to forward or backward.
+  time = cm * 1;//Change this to a time...
   
 }
 
-void Turn (bool direction, int degrees, int speed)
+void Turn (bool direction, int degrees)
 {
   if (direction)
   {
@@ -128,15 +144,10 @@ void Turn (bool direction, int degrees, int speed)
   {
     num = -1;
   }
-  timer++;
-  data[3] = speed;
+  timer2 = 0;
+  data[3] = 15;
   data[2] = 100 * num; //Set it to right or left.
-  if (timer >= degrees)
-  {
-    data[2] = 0;
-    timer = 0;
-  }//Something to set data[2] to 0 after we have reached the 
-  //destination a.k.a time.
+  turntime = cm * 1;//Change this to a time...
   
 }
 
