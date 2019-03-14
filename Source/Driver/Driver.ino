@@ -4,6 +4,7 @@
 #include "SoftwareSerialParityHalfDuplex.h"
 #include <Wire.h>
 
+
 SoftwareSerialParityHalfDuplex mySerial(10, 10);
 
 unsigned long tenMilliTimer = 0;
@@ -18,6 +19,8 @@ int curFor = 0;
 int curTurn = 0;
 int speed = 0x0c;
 
+void startupChair();
+
 void setup()
 {
   Wire.begin(0x33);
@@ -25,7 +28,7 @@ void setup()
 
   pinMode(13, OUTPUT);
 
-  pinMode(10,OUTPUT);
+  pinMode(10, OUTPUT);
   digitalWrite (10, LOW);  // start serial line LOW
 
   Serial.begin(115200);
@@ -38,80 +41,55 @@ void setup()
   hundredMilliTimer = millis();
 }
 
-int coms[3] = {0,0,0};
+int coms[3] = {0, 0, 0};
 union foo
 {
   byte a;
   char b;
 };
 
+int data[3] = {0, 0, 0};
+int dataSet = 0;
 
-void receiveEvent()
+void receiveEvent(int dummy)
 {
+
   Serial.print(millis());
   Serial.println(" receiveData");
-  int comsN = -1;
   while (Wire.available())
   {
-    Serial.println("Got data");
-    if (comsN == -1)
+    Wire.read();
+    data[dataSet] = Wire.read();
+    Wire.read();
+    ++dataSet;
+
+    if (dataSet == 4)
     {
-      union foo bar;
-      bar.b = Wire.read(); // receive byte as a character
-      int c = bar.b;
-      // Serial.println(c);
-      if (c == 'g')
+
+      if (data[0] >= -100 && data[0] <= 100 && data[1] >= -100 && data[1] <= 100 && data[2] >= 0 && data[2] <= 0xe)
       {
-        comsN++;
+
+        //	Serial.println("Received command: ");
+
+        Serial.print("Forward/Backward: ");
+        Serial.print (data[0]);
+
+        Serial.print(" Left/write: ");
+        Serial.print(data[1]);
+
+        Serial.print(" Speed: ");
+        Serial.println(data[2]);
+
+        curFor = data[0];
+        curTurn = data[1];
+        speed = data[2];
       }
-    }
-    else if (comsN >= 0)
-    {
-      union foo bar;
-      bar.a = Wire.read(); // receive byte as a character
-      //      Serial.println(c);
-      int c = bar.b;
-      coms[comsN] = c; // receive byte
-      comsN++;
-
-      if (comsN == 3)
+      else
       {
-        comsN = -1;
-        int a = coms[0];
-        int t = coms[1];
-        int s = coms[2];
-        /*
-        Serial.print(a);
-        Serial.print(" ");
-        Serial.print(t);
-        Serial.print(" ");
-        Serial.println(s);
-        */
-        if (a >= -100 && a <= 100 && t >= -100 && t <= 100 && s >= 0 && s <= 0xe)
-        {
-
-          //  Serial.println("Received command: ");
-
-          Serial.print("Forward/Backward: ");
-          Serial.print (a);
-
-          Serial.print(" Left/write: ");
-          Serial.print(t);
-
-          Serial.print(" Speed: ");
-          Serial.println(s);
-
-          curFor = a;
-          curTurn = t;
-          speed = s;
-        }
-        else
-        {
-          Serial.println("Received bad command");
-          curFor = 0;
-          curTurn = 0;
-          speed = 0;
-        }
+        Serial.println("Received bad command");
+        curFor = 0;
+        curTurn = 0;
+        speed = 0;
       }
     }
   }
@@ -145,13 +123,13 @@ void sendJoystickPacket(int forward, int turn, int speed)
   buffer[2] = speed;
   buffer[3] = forward;
   buffer[4] = turn;
-  /*  Serial.print(millis());
-    Serial.print(" Sending :");
-    Serial.print(forward);
-    Serial.print(" ");
-    Serial.print(turn);
-    Serial.print(" ");
-    Serial.println(speed);
+  /*	Serial.print(millis());
+  	Serial.print(" Sending :");
+  	Serial.print(forward);
+  	Serial.print(" ");
+  	Serial.print(turn);
+  	Serial.print(" ");
+  	Serial.println(speed);
   */
   buffer[5] = 0xff - (buffer[0] + buffer[1] + buffer[2] + buffer[3] + buffer[4]);
 
@@ -160,7 +138,6 @@ void sendJoystickPacket(int forward, int turn, int speed)
 
 void loop()
 {
-  
   unsigned long milli = millis();
 
   // once per second
