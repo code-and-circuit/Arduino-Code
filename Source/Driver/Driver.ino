@@ -68,6 +68,7 @@ void receiveEvent(int dummy)
 
       if (data[0] >= -100 && data[0] <= 100 && data[1] >= -100 && data[1] <= 100 && data[2] >= 0 && data[2] <= 0xe)
       {
+        dataSet = 0;
 
         //	Serial.println("Received command: ");
 
