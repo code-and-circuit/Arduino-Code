@@ -87,6 +87,12 @@ void loop(){
   Serial.print("L: ");
    Serial.println(leftmotor);
 
+   if (abs(rightmotor - rightmotortarget) < ramp_increment)
+      rightmotor = rightmotortarget;
+
+   if (abs(leftmotor - leftmotortarget) < ramp_increment)
+      leftmotor = leftmotortarget;
+
  if (rightmotor < rightmotortarget)
     rightmotor += ramp_increment;
  else if (rightmotor > rightmotortarget)
@@ -155,7 +161,7 @@ void loop(){
       }
       else if(ps2x.Button(PSB_PAD_RIGHT)){
         Right();
-        VibrateController();
+        StartVibrateController();
        Serial.print("Right held this hard: ");
         Serial.println(ps2x.Analog(PSAB_PAD_RIGHT), DEC);
       }
@@ -264,11 +270,15 @@ void Stop()
     leftmotortarget = 90;
 }
 
-void VibrateController ()
+void StartVibrateController ()
 {
      vibrate = 255;
 }
 
+void StopVibrateController ()
+{
+     vibrate = 0;
+}
 
 
 
