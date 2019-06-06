@@ -125,9 +125,6 @@ void loop()
    return;
   }
 
-
-  if(type == 1)
-  {
    ps2x.read_gamepad(false, vibrate); //read controller and set large motor to spin at 'vibrate' speed
 
    if(ps2x.Button(PSB_START)) //will be TRUE as long as button is pressed
@@ -150,7 +147,7 @@ void loop()
    else if(ps2x.Button(PSB_PAD_RIGHT))
    {
      Right();
-     StartVibrateController();
+    // StartVibrateController();
      Serial.print("Right held this hard: ");
      Serial.println(ps2x.Analog(PSAB_PAD_RIGHT), DEC);
    }
@@ -171,7 +168,53 @@ void loop()
 
    else
    {
-     Stop();
+        int Xaxis = map(ps2x.Analog(PSS_LX), 0, 255, -100,100);  
+        int Yaxis = map(ps2x.Analog(PSS_LY), 0, 255, 100,-100);  
+
+      if (Yaxis < -2 || Yaxis > 2)
+      {
+         rightmotortarget = map(Yaxis, -100, 100, 180, 0);
+         leftmotortarget = map(Yaxis, -100, 100, 180, 0);
+
+         if (Yaxis > 0)
+         {
+          // forward
+          if (Xaxis > 10)  // curve left
+          {
+             rightmotortarget += ( Xaxis / 100.0) * 100;
+          }
+          else if (Xaxis < -10) // curve right
+          {
+             leftmotortarget += ( -Xaxis / 100.0) * 100;
+          }
+         }
+         else // backwards
+         {
+           if (Xaxis > 10)
+          {
+             rightmotortarget -= ( Xaxis / 100.0) * 100;
+          }
+          else if (Xaxis < -10)
+          {
+             leftmotortarget -= ( -Xaxis / 100.0) * 100;
+          }
+         }
+       }
+      else
+      {
+        if (Xaxis > 5)
+        {
+          Right();
+        }
+        else if (Xaxis < -5)
+        {
+          Left();
+        }
+        else
+        {
+          Stop();
+        }
+      }
    }
 
    delay(20);
